@@ -1,0 +1,67 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Portal Ana Franco{% endblock %}</title>
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-700 text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+               
+                <div class="text-xl font-bold">
+                Ana Franco
+                </div>
+               
+                <button id="menu-button" class="md:hidden text-2xl">☰</button>
+               
+                <div class="hidden md:flex space-x-6">
+                    <a href="/">Início</a>
+                    <a href="#">Notícias</a>
+                    <a href="#">Uniformes</a>
+                    <a href="#">Documentos</a>
+                </div>
+               
+                <div class="hidden md:block">
+                    <a href="/admin">Acesso restrito</a>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+    <div id="mobile-menu"
+         class="fixed top-0 right-0 h-full w-64 bg-blue-800 text-white transform translate-x-full transition-transform duration-300 z-50">
+
+        <div class="p-8 space-y-6 text-xl">
+            <button id="close-menu" class="text-2xl mb-6">✕</button>
+            <a href="/" class="block">Início</a>
+            <a href="#" class="block">Notícias</a>
+            <a href="#" class="block">Uniformes</a>
+            <a href="#" class="block">Documentos</a>
+            <a href="/admin" class="block">Acesso restrito</a>
+        </div>
+    </div>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <script>
+        const menu = document.getElementById("mobile-menu")
+        const openBtn = document.getElementById("menu-button")
+        const closeBtn = document.getElementById("close-menu")
+
+        openBtn.addEventListener("click", () => {
+            menu.classList.remove("translate-x-full")
+        })
+
+        closeBtn.addEventListener("click", () => {
+            menu.classList.add("translate-x-full")
+        })
+    </script>
+</body>
+</html>
