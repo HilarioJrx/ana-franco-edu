@@ -16,5 +16,3 @@ staticfiles/
 .idea/
 
 */migrations/__pycache__/
-
-theme/static/css/dist/
