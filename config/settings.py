@@ -135,3 +135,6 @@ STATICFILES_DIRS = [
 
 # Enable WhiteNoise to serve static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Redirect users to site root after logout
+LOGOUT_REDIRECT_URL = '/'

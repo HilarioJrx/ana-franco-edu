@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-12 p-6 bg-white rounded shadow">
+    <h2 class="text-2xl mb-4">Entrar</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-4">
+            <label for="id_username" class="block">Usuário</label>
+            {{ form.username }}
+        </div>
+        <div class="mb-4">
+            <label for="id_password" class="block">Senha</label>
+            {{ form.password }}
+        </div>
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-yellow-400 text-black hover:bg-yellow-500 px-4 py-2 rounded">Entrar</button>
+            <a href="/">Voltar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
