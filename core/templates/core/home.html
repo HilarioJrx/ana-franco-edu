@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
-Home
+Página Inicial
 {% endblock %}
 
 {% block content %}
@@ -26,7 +27,7 @@ Home
             <div class="hidden md:flex justify-center">
                 <div class="bg-white rounded-lg p-6 text-center w-full max-w-md shadow-md">
                     <p class="text-sm text-gray-600"></p>
-                    <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STGZtc8M8NfHvtWvqGK0O5WeKmnH_0glA3k7agOH_sAyrX5yAMMohZOmN_WjtYMCy0QpyxrdjXMCiN1FfVbu3Ebd7akoC5ess6WYpqT959dM8slmTgX4qSofT-wz-JUxqYbtit1r1_HzQMmVoeYU9cxQyEq2GwdqdKvQD_lhQRRlCvXM23qdUVErAGpEysPf5a4fhTkqmeXwfWKrht47VhFQX1-_CgXsZqsPy4=w1280" alt="escola" class="mt-4 rounded shadow-sm">
+                    <img src="{% static 'ana_franco_logo.jpg' %}" alt="escola" class="mt-4 rounded shadow-sm">
                 </div>
             </div>
         </div>
