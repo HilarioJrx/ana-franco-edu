@@ -4,10 +4,16 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
+from .models import Feed
 
 
 def home(request):
     return render(request, "core/home.html")
+
+
+def news_list(request):
+    feeds = Feed.objects.all().order_by('-created_at').prefetch_related('categories')
+    return render(request, 'core/news_list.html', {'feeds': feeds})
 
 
 class CustomLoginView(LoginView):
@@ -32,9 +38,9 @@ class CustomLoginView(LoginView):
         form = super().get_form(form_class)
         cls = "w-full px-3 py-2 border border-gray-300 rounded shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
         if 'username' in form.fields:
-            form.fields['username'].widget.attrs.update({'class': cls, 'placeholder': form.fields['username'].label or 'Usuário'})
+            form.fields['username'].widget.attrs.update({'class': cls, 'placeholder': 'RM do Aluno(a)'})
         if 'password' in form.fields:
-            form.fields['password'].widget.attrs.update({'class': cls, 'placeholder': form.fields['password'].label or 'Senha'})
+            form.fields['password'].widget.attrs.update({'class': cls, 'placeholder': 'Senha'})
         return form
 
 

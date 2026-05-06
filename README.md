@@ -78,6 +78,19 @@ Instale as dependências:
 pip install -r requirements.txt
 ```
 
+### Configuração de Variáveis de Ambiente
+
+- No Bash ou PowerShell:
+  ```shell
+  cp .env.example .env
+  ```
+- No CMD (Windows):
+  ```shell
+  copy .env.example .env
+  ```
+
+Edite o arquivo `.env` com suas configurações locais (ou credenciais AWS se for usar S3).
+
 ## Rodando o projeto
 
 Aplicar migrations:

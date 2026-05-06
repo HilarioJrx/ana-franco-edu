@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Notícias - Portal Ana Franco{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Feed de Notícias</h1>
+        <p class="text-lg text-gray-600">Acompanhe as últimas novidades e comunicados da nossa escola.</p>
+    </div>
+
+    {% if feeds %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for feed in feeds %}
+        <article class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
+            {% if feed.image_key %}
+            <div class="aspect-video w-full bg-gray-200 relative">
+                {# Aqui você pode customizar a URL da imagem baseada no seu bucket/S3 #}
+                <img src="{% if USE_S3 %}https://{{ AWS_STORAGE_BUCKET_NAME }}.s3.amazonaws.com/{{ feed.image_key }}{% else %}/media/{{ feed.image_key }}{% endif %}" 
+                     alt="{{ feed.title }}" 
+                     class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+            
+            <div class="p-6 flex-1 flex flex-col">
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for category in feed.categories.all %}
+                    <span class="px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm" 
+                          style="background-color: {{ category.color|default:'#4B5563' }}">
+                        {{ category.name }}
+                    </span>
+                    {% endfor %}
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-3 leading-tight hover:text-yellow-500 transition-colors cursor-pointer">
+                    {{ feed.title }}
+                </h2>
+                
+                <p class="text-gray-600 line-clamp-3 mb-6 flex-1">
+                    {{ feed.content }}
+                </p>
+
+                <div class="flex items-center justify-between pt-4 border-t border-gray-50 text-sm text-gray-500 mt-auto">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-medium text-gray-900">{{ feed.author.get_full_name|default:feed.author.username }}</span>
+                    </div>
+                    <time datetime="{{ feed.created_at|date:'Y-m-d' }}">{{ feed.created_at|date:"d M, Y" }}</time>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-2xl p-12 text-center border-2 border-dashed border-gray-200">
+        <div class="text-6xl mb-4">📰</div>
+        <h3 class="text-xl font-bold text-gray-900">Nenhuma notícia encontrada</h3>
+        <p class="text-gray-500 mt-2">Fique ligado! Em breve teremos novidades por aqui.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
