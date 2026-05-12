@@ -5,6 +5,8 @@ from django.contrib.auth import login as auth_login
 from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.conf import settings
+import os
 from .models import Feed, UniformItem, UniformOrder, UniformOrderItem
 from .forms import UniformOrderForm, UniformOrderItemFormSet
 
@@ -111,3 +113,24 @@ def uniform_catalog(request):
         'item_formset': item_formset,
         'user_orders': user_orders,
     })
+
+def document_list(request):
+    doc_dir = os.path.join(settings.MEDIA_ROOT, 'documentos')
+    documents = []
+    
+    if os.path.exists(doc_dir):
+        for filename in os.listdir(doc_dir):
+            if filename == '.gitkeep':
+                continue
+            
+            file_path = os.path.join(doc_dir, filename)
+            if os.path.isfile(file_path):
+                ext = os.path.splitext(filename)[1].lower()
+                documents.append({
+                    'name': filename,
+                    'url': settings.MEDIA_URL + 'documentos/' + filename,
+                    'extension': ext,
+                    'size_mb': round(os.path.getsize(file_path) / (1024 * 1024), 2)
+                })
+    
+    return render(request, 'core/document_list.html', {'documents': documents})
