@@ -4,7 +4,9 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
-from .models import Feed
+from django.contrib import messages
+from .models import Feed, UniformItem, UniformOrder, UniformOrderItem
+from .forms import UniformOrderForm, UniformOrderItemFormSet
 
 
 def home(request):
@@ -38,7 +40,7 @@ class CustomLoginView(LoginView):
         form = super().get_form(form_class)
         cls = "w-full px-3 py-2 border border-gray-300 rounded shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-yellow-300"
         if 'username' in form.fields:
-            form.fields['username'].widget.attrs.update({'class': cls, 'placeholder': 'RM do Aluno(a)'})
+            form.fields['username'].widget.attrs.update({'class': cls, 'placeholder': 'Seu login'})
         if 'password' in form.fields:
             form.fields['password'].widget.attrs.update({'class': cls, 'placeholder': 'Senha'})
         return form
@@ -56,3 +58,51 @@ def gestor(request):
     if not request.user.groups.filter(name='Gestores').exists():
         return HttpResponseForbidden('Acesso restrito a Gestores')
     return render(request, 'core/gestor.html')
+
+
+def uniform_catalog(request):
+    items = UniformItem.objects.filter(available=True)
+    
+    # Permitir Alunos OU Superusuários (para você conseguir testar)
+    is_aluno = request.user.is_authenticated and (
+        request.user.groups.filter(name='Alunos').exists() or 
+        request.user.is_superuser
+    )
+
+    order_form = None
+    item_formset = None
+    order_success = False
+
+    if is_aluno:
+        if request.method == 'POST':
+            order_form = UniformOrderForm(request.POST)
+            item_formset = UniformOrderItemFormSet(request.POST)
+
+            if order_form.is_valid() and item_formset.is_valid():
+                order = order_form.save(commit=False)
+                order.user = request.user
+                order.save()
+
+                for form in item_formset:
+                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                        UniformOrderItem.objects.create(
+                            order=order,
+                            uniform_item=form.cleaned_data['uniform_item'],
+                            size=form.cleaned_data['size'],
+                            quantity=form.cleaned_data['quantity'],
+                        )
+
+                messages.success(request, 'Pedido realizado com sucesso!')
+                return redirect('uniform_catalog')
+            else:
+                messages.error(request, 'Erro ao processar o pedido. Verifique os campos abaixo.')
+        else:
+            order_form = UniformOrderForm()
+            item_formset = UniformOrderItemFormSet()
+
+    return render(request, 'core/uniform_catalog.html', {
+        'items': items,
+        'is_aluno': is_aluno,
+        'order_form': order_form,
+        'item_formset': item_formset,
+    })
