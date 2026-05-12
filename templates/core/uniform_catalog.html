@@ -63,12 +63,15 @@
                     </div>
 
                     <div class="flex items-center gap-2 mb-3">
-                        <span class="inline-block px-2 py-0.5 rounded bg-gray-100 text-gray-600 text-xs font-medium">{{ item.color }}</span>
+                        <span class="inline-block px-2 py-0.5 rounded bg-gray-100 text-gray-600 text-xs font-medium">
+                            {{ item.color }}
+                        </span>
                     </div>
 
                     <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
                         <span class="text-xl font-extrabold text-gray-900">R$ {{ item.price }}</span>
-                        <span class="text-yellow-500 font-bold text-sm bg-yellow-50 px-2 py-1 rounded-lg">+ Escolher</span>
+                        <span class="text-yellow-500 font-bold text-sm bg-yellow-50 px-2 py-1 rounded-lg">+
+                            Escolher</span>
                     </div>
                 </div>
             </div>
@@ -101,14 +104,18 @@
 
     <!-- Checkout Section (Alunos only) -->
     {% if is_aluno %}
-    <section id="checkout-section" class="hidden bg-white rounded-3xl shadow-sm border border-gray-100 p-8 lg:p-10 mb-16 animate-fade-in">
-        <button onclick="backToCatalog()" class="mb-8 flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <section id="checkout-section"
+        class="hidden bg-white rounded-3xl shadow-sm border border-gray-100 p-8 lg:p-10 mb-16 animate-fade-in">
+        <button onclick="backToCatalog()"
+            class="mb-8 flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
             Voltar para o catálogo
         </button>
 
         <div class="mb-10">
-            <h2 class="text-3xl font-black text-gray-900">Seu Pedido</h2>
+            <h2 class="text-3xl font-black text-gray-900">Resumo do Pedido</h2>
             <p class="text-gray-500 mt-1">Revise os itens antes de enviar.</p>
         </div>
 
@@ -135,57 +142,128 @@
                         <div class="text-sm text-gray-500">Total do Pedido</div>
                         <div id="checkout-total" class="text-3xl font-black text-gray-900">R$ 0,00</div>
                     </div>
-                    <button type="submit" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-extrabold px-12 py-4 rounded-2xl shadow-xl transition-all hover:-translate-y-1">
+                    <button type="submit"
+                        class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-extrabold px-12 py-4 rounded-2xl shadow-xl transition-all hover:-translate-y-1">
                         Finalizar Pedido
                     </button>
                 </div>
             </div>
         </form>
     </section>
+    {% endif %}
 
-    {% elif not request.user.is_authenticated %}
-    <!-- Not logged in CTA -->
-    <section id="login-cta" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center transition-all duration-500">
-        <div class="text-5xl mb-4">🔒</div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Faça login para realizar seu pedido</h3>
-        <p class="text-gray-600 mb-6">Você precisa estar logado como aluno para solicitar uniformes.</p>
-        <a href="{% url 'login' %}?next={% url 'uniform_catalog' %}"
-            class="inline-block bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-            Entrar
-        </a>
+    <!-- Order History Section -->
+    {% if user_orders %}
+    <section id="orders-history" class="mt-20 mb-16">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold text-gray-900">Meus Pedidos</h2>
+            <span class="text-sm text-gray-500">{{ user_orders|length }} pedido{{ user_orders|pluralize }} realizado{{ user_orders|pluralize }}</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6">
+            {% for order in user_orders %}
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div class="p-6 sm:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl">
+                                📦
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">Pedido #{{ order.id }}</h3>
+                                <p class="text-sm text-gray-500">{{ order.created_at|date:"d/m/Y \à\s H:i" }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Badge -->
+                        <div>
+                            {% if order.status == 'pendente' %}
+                                <span class="px-4 py-1.5 rounded-full bg-yellow-100 text-yellow-700 text-sm font-bold border border-yellow-200">Pendente</span>
+                            {% elif order.status == 'preparando' %}
+                                <span class="px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-bold border border-blue-200">Em Preparação</span>
+                            {% elif order.status == 'disponivel' %}
+                                <span class="px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-bold border border-green-200">Disponível para Retirada</span>
+                            {% elif order.status == 'entregue' %}
+                                <span class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-600 text-sm font-bold border border-gray-200">Entregue</span>
+                            {% elif order.status == 'cancelado' %}
+                                <span class="px-4 py-1.5 rounded-full bg-red-100 text-red-700 text-sm font-bold border border-red-200">Cancelado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Order Items Summary -->
+                    <div class="bg-gray-50 rounded-2xl p-4 sm:p-6 mb-4">
+                        <div class="space-y-3">
+                            {% for item in order.items.all %}
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-700">
+                                    <span class="font-bold">{{ item.quantity }}x</span> {{ item.uniform_item.name }} ({{ item.size }})
+                                </span>
+                                <span class="text-gray-500">R$ {{ item.subtotal|floatformat:2 }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
+                            <span class="font-bold text-gray-900 text-lg">Total</span>
+                            <span class="font-black text-gray-900 text-xl">R$ {{ order.total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    {% if order.notes %}
+                    <div class="text-sm text-gray-600 italic">
+                        "{{ order.notes }}"
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </section>
     {% endif %}
 
 </div>
 
 <!-- Floating Cart Button -->
-<div id="floating-cart" class="hidden animate-bounce-in" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9998;">
-    <button onclick="goToCheckout()" class="bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 hover:scale-105 transition-transform">
+{% if is_aluno %}
+<div id="floating-cart" class="hidden animate-bounce-in"
+    style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9998;">
+    <button onclick="goToCheckout()"
+        class="bg-gray-900 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 hover:scale-105 transition-transform">
         <div class="relative">
             <span class="text-2xl">🛒</span>
-            <span id="cart-count" class="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-gray-900">0</span>
+            <span id="cart-count"
+                class="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-gray-900">0</span>
         </div>
-        <span class="font-bold">Ver Pedido</span>
+        <span class="font-bold">Meu Carrinho</span>
     </button>
 </div>
+{% endif %}
 
 <!-- Selection Modal -->
-<div id="item-modal" class="hidden overflow-y-auto" style="position: fixed; inset: 0; z-index: 9999; display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div id="item-modal" class="hidden overflow-y-auto" style="position: fixed; inset: 0; z-index: 9999; display: none;"
+    aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div onclick="closeItemModal()" style="position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); transition: opacity 0.3s;" aria-hidden="true"></div>
+        <div onclick="closeItemModal()"
+            style="position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); transition: opacity 0.3s;"
+            aria-hidden="true"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        
-        <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full animate-modal-in" style="position: relative; z-index: 10000; max-width: 450px; width: 90%;">
+
+        <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full animate-modal-in"
+            style="position: relative; z-index: 10000; max-width: 450px; width: 90%;">
             <div class="bg-white px-6 py-6 sm:p-8">
                 <div class="flex justify-between items-start mb-6">
                     <h3 class="text-2xl font-extrabold text-gray-900" id="modal-item-name">Nome do Item</h3>
                     <button onclick="closeItemModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
 
                 <div class="flex gap-6 mb-8">
-                    <div id="modal-item-img-container" class="w-32 h-32 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden shrink-0 border border-gray-100">
+                    <div id="modal-item-img-container"
+                        class="w-32 h-32 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden shrink-0 border border-gray-100">
                         <img id="modal-item-img" src="" alt="" class="w-full h-full object-contain p-2">
                     </div>
                     <div>
@@ -205,17 +283,27 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Quantidade</label>
                         <div class="flex items-center gap-4">
-                            <button onclick="updateQty(-1)" class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">-</button>
+                            <button onclick="updateQty(-1)"
+                                class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">-</button>
                             <span id="modal-qty" class="text-xl font-bold w-8 text-center">1</span>
-                            <button onclick="updateQty(1)" class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">+</button>
+                            <button onclick="updateQty(1)"
+                                class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">+</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="bg-gray-50 px-6 py-4 sm:px-8 flex flex-col gap-3">
-                <button onclick="addItemToCart()" class="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-black transition-all">
+                {% if is_aluno %}
+                <button onclick="addItemToCart()"
+                    class="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-black transition-all">
                     Adicionar ao Pedido
                 </button>
+                {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}"
+                    class="w-full bg-yellow-400 text-black text-center font-bold py-4 rounded-2xl shadow-lg hover:bg-yellow-500 transition-all">
+                    Faça login para pedir
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -223,19 +311,49 @@
 
 <style>
     @keyframes modalIn {
-        from { opacity: 0; transform: scale(0.95) translateY(10px); }
-        to { opacity: 1; transform: scale(1) translateY(0); }
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
     }
+
     @keyframes bounceIn {
-        0% { transform: scale(0.3); opacity: 0; }
-        50% { transform: scale(1.05); }
-        70% { transform: scale(0.9); }
-        100% { transform: scale(1); opacity: 1; }
+        0% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        70% {
+            transform: scale(0.9);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
-    .animate-modal-in { animation: modalIn 0.3s ease-out forwards; }
-    .animate-bounce-in { animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    .animate-fade-in { animation: modalIn 0.4s ease-out forwards; }
-    
+
+    .animate-modal-in {
+        animation: modalIn 0.3s ease-out forwards;
+    }
+
+    .animate-bounce-in {
+        animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .animate-fade-in {
+        animation: modalIn 0.4s ease-out forwards;
+    }
+
     .size-btn-active {
         background-color: #111827 !important;
         color: white !important;
@@ -244,36 +362,24 @@
 </style>
 
 <script>
-    const isAluno = {% if is_aluno %}true{% else %}false{% endif %};
+    const isAluno = {% if is_aluno %}true{% else %} false{% endif %};
     const itemsData = JSON.parse(document.getElementById('items-data').textContent);
     const sizeChoices = ['PP', 'P', 'M', 'G', 'GG', 'XG'];
-    
+
     let cart = JSON.parse(localStorage.getItem('uniform_cart') || '[]');
     let currentItem = null;
     let currentQty = 1;
     let currentSize = '';
 
     function openItemModal(id) {
-        if (typeof isAluno === 'undefined' || !isAluno) {
-            const cta = document.getElementById('login-cta');
-            if (cta) {
-                cta.scrollIntoView({ behavior: 'smooth' });
-                cta.classList.add('ring-4', 'ring-yellow-400', 'ring-opacity-50');
-                setTimeout(() => cta.classList.remove('ring-4'), 2000);
-            } else {
-                alert('Faça login como aluno para realizar pedidos.');
-            }
-            return;
-        }
-
         currentItem = itemsData.find(i => i.id === id);
         currentQty = 1;
         currentSize = '';
-        
+
         document.getElementById('modal-item-name').textContent = currentItem.name;
         document.getElementById('modal-item-price').textContent = `R$ ${currentItem.price}`;
         document.getElementById('modal-item-color').textContent = `Cor: ${currentItem.color}`;
-        
+
         const img = document.getElementById('modal-item-img');
         if (currentItem.image && currentItem.image !== 'null') {
             img.src = currentItem.image;
@@ -282,10 +388,10 @@
             img.src = '';
             img.style.display = 'none';
         }
-        
+
         renderSizeOptions();
         updateQtyDisplay();
-        
+
         const modal = document.getElementById('item-modal');
         modal.classList.remove('hidden');
         modal.style.display = 'block';
@@ -332,7 +438,7 @@
             alert('Por favor, selecione um tamanho.');
             return;
         }
-        
+
         const cartItem = {
             id: currentItem.id,
             name: currentItem.name,
@@ -341,12 +447,12 @@
             qty: currentQty,
             image: currentItem.image
         };
-        
+
         cart.push(cartItem);
         saveCart();
         closeItemModal();
         updateFloatingCart();
-        
+
         // Visual feedback
         const btn = document.getElementById('floating-cart');
         btn.classList.add('animate-bounce');
@@ -360,7 +466,7 @@
     function updateFloatingCart() {
         const floating = document.getElementById('floating-cart');
         const count = document.getElementById('cart-count');
-        
+
         if (cart.length > 0) {
             floating.classList.remove('hidden');
             count.textContent = cart.length;
@@ -386,7 +492,7 @@
     function renderCheckout() {
         const container = document.getElementById('checkout-items');
         let total = 0;
-        
+
         if (cart.length === 0) {
             container.innerHTML = '<p class="text-center py-10 text-gray-500">Seu carrinho está vazio.</p>';
             document.getElementById('checkout-total').textContent = 'R$ 0,00';
@@ -412,7 +518,7 @@
                 </div>
             `;
         }).join('');
-        
+
         document.getElementById('checkout-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
         syncFormset();
     }
@@ -426,10 +532,10 @@
     function syncFormset() {
         const container = document.getElementById('hidden-formset-container');
         const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-        
+
         container.innerHTML = '';
         totalForms.value = cart.length;
-        
+
         cart.forEach((item, idx) => {
             container.innerHTML += `
                 <input type="hidden" name="form-${idx}-uniform_item" value="${item.id}">
@@ -441,8 +547,15 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
+        // Clear cart if success message is present
+        const successMessage = document.querySelector('.bg-green-50');
+        if (successMessage) {
+            localStorage.removeItem('uniform_cart');
+            cart = [];
+        }
+
         updateFloatingCart();
-        
+
         // Intercept form submission to clear cart
         const form = document.getElementById('final-order-form');
         if (form) {

@@ -36,8 +36,9 @@ class UniformOrderItemInline(admin.TabularInline):
 
 @admin.register(UniformOrder)
 class UniformOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'total_display', 'created_at')
-    list_filter = ('created_at',)
+    list_display = ('id', 'user', 'status', 'total_display', 'created_at')
+    list_editable = ('status',)
+    list_filter = ('status', 'created_at')
     search_fields = ('user__username', 'user__first_name', 'user__last_name')
     readonly_fields = ('user', 'created_at', 'total_display')
     inlines = [UniformOrderItemInline]

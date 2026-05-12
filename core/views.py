@@ -100,9 +100,14 @@ def uniform_catalog(request):
             order_form = UniformOrderForm()
             item_formset = UniformOrderItemFormSet()
 
+    user_orders = None
+    if request.user.is_authenticated:
+        user_orders = UniformOrder.objects.filter(user=request.user).order_by('-created_at')
+
     return render(request, 'core/uniform_catalog.html', {
         'items': items,
         'is_aluno': is_aluno,
         'order_form': order_form,
         'item_formset': item_formset,
+        'user_orders': user_orders,
     })

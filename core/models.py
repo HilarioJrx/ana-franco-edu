@@ -57,11 +57,23 @@ class UniformItem(models.Model):
         return f"{self.name} — {self.color}"
 
 
+UNIFORM_ORDER_STATUS = [
+    ('pendente', 'Pendente'),
+    ('preparando', 'Em Preparação'),
+    ('disponivel', 'Disponível para Retirada'),
+    ('entregue', 'Entregue'),
+    ('cancelado', 'Cancelado'),
+]
+
 class UniformOrder(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='uniform_orders',
         verbose_name="Aluno"
+    )
+    status = models.CharField(
+        max_length=20, choices=UNIFORM_ORDER_STATUS, default='pendente',
+        verbose_name="Status"
     )
     notes = models.TextField(blank=True, verbose_name="Observações")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data do pedido")
