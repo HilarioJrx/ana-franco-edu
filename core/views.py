@@ -136,3 +136,4 @@ def document_list(request):
                 })
     
     return render(request, 'core/document_list.html', {'documents': documents})
+

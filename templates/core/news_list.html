@@ -13,10 +13,9 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for feed in feeds %}
         <article class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
-            {% if feed.image_key %}
+            {% if feed.image %}
             <div class="aspect-video w-full bg-gray-200 relative">
-                {# Aqui você pode customizar a URL da imagem baseada no seu bucket/S3 #}
-                <img src="{% if USE_S3 %}https://{{ AWS_STORAGE_BUCKET_NAME }}.s3.amazonaws.com/{{ feed.image_key }}{% else %}/media/{{ feed.image_key }}{% endif %}" 
+                <img src="{{ feed.image.url }}" 
                      alt="{{ feed.title }}" 
                      class="w-full h-full object-cover">
             </div>

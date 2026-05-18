@@ -15,7 +15,7 @@ class Category(models.Model):
 class Feed(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    image_key = models.CharField(max_length=255, blank=True, null=True, help_text="Nome/caminho da imagem no bucket")
+    image = models.ImageField(upload_to='feeds/', blank=True, null=True, verbose_name="Imagem")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -42,9 +42,8 @@ class UniformItem(models.Model):
     description = models.TextField(blank=True, verbose_name="Descrição")
     price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Preço (R$)")
     available = models.BooleanField(default=True, verbose_name="Disponível")
-    image_key = models.CharField(
-        max_length=255, blank=True, null=True,
-        help_text="Nome/caminho da imagem no bucket",
+    image = models.ImageField(
+        upload_to='uniforms/', blank=True, null=True,
         verbose_name="Imagem"
     )
 

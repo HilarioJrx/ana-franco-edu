@@ -88,12 +88,28 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+db_name = os.getenv('DB_NAME')
+if db_name:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_name,
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -138,7 +154,14 @@ STATICFILES_DIRS = [
 ]
 
 # Enable WhiteNoise to serve static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage" if os.getenv('USE_S3', 'False') == 'True' else "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Redirect users to site root after logout
 LOGOUT_REDIRECT_URL = '/'
@@ -150,11 +173,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 USE_S3 = os.getenv('USE_S3', 'False') == 'True'
 
 if USE_S3:
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
-    AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN', f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com')
+    AWS_ACCESS_KEY_ID = os.getenv('S3_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('S3_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('S3_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.getenv('S3_REGION_NAME', 'us-east-1')
+    AWS_QUERYSTRING_AUTH = False
     
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # Suporte para endpoints S3 customizados (ex: Leapcell)
+    aws_s3_endpoint_url = os.getenv('S3_ENDPOINT_URL')
+    if aws_s3_endpoint_url:
+        AWS_S3_ENDPOINT_URL = aws_s3_endpoint_url
+        
+    aws_s3_custom_domain = os.getenv('S3_CUSTOM_DOMAIN')
+    if aws_s3_custom_domain:
+        AWS_S3_CUSTOM_DOMAIN = aws_s3_custom_domain
+    else:
+        AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
