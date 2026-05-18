@@ -20,27 +20,27 @@
                     Ana Franco
                 </div>
 
-                <button id="menu-button" class="md:hidden text-2xl">☰</button>
+                <button id="menu-button" class="md:hidden text-2xl cursor-pointer hover:text-yellow-300 transition-colors">☰</button>
 
-                <div class="hidden md:flex space-x-6">
-                    <a href="/" class="hover:text-yellow-300">Início</a>
-                    <a href="{% url 'news_list' %}" class="hover:text-yellow-300">Notícias</a>
-                    <a href="{% url 'uniform_catalog' %}" class="hover:text-yellow-300">Uniformes</a>
-                    <a href="{% url 'document_list' %}" class="hover:text-yellow-300">Documentos</a>
+                <div class="hidden md:flex space-x-2 items-center">
+                    <a href="/" class="px-3 py-2 rounded-md font-medium transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95 focus:outline-none focus:ring-2 focus:ring-yellow-300">Início</a>
+                    <a href="{% url 'news_list' %}" class="px-3 py-2 rounded-md font-medium transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95 focus:outline-none focus:ring-2 focus:ring-yellow-300">Notícias</a>
+                    <a href="{% url 'uniform_catalog' %}" class="px-3 py-2 rounded-md font-medium transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95 focus:outline-none focus:ring-2 focus:ring-yellow-300">Uniformes</a>
+                    <a href="{% url 'document_list' %}" class="px-3 py-2 rounded-md font-medium transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95 focus:outline-none focus:ring-2 focus:ring-yellow-300">Documentos</a>
                 </div>
 
                 <div class="hidden md:flex space-x-4 items-center">
                     {% if user.is_authenticated %}
                     {% if user.is_staff %}
-                    <a href="/admin" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-lg font-semibold mr-4 transition-colors">Área administrativa</a>
+                    <a href="/admin" class="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 active:scale-95 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200">Área administrativa</a>
                     {% endif %}
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit"
-                            class="bg-yellow-400 text-black px-3 py-1 rounded font-semibold">Sair</button>
+                            class="bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 active:scale-95 text-black px-4 py-2 rounded-lg font-bold transition-all duration-200 shadow hover:shadow-md cursor-pointer">Sair</button>
                     </form>
                     {% else %}
-                    <a href="/accounts/login/" class="text-white hover:text-yellow-300">Entrar</a>
+                    <a href="/accounts/login/" class="px-4 py-2 rounded-md font-bold transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95 border border-transparent hover:border-gray-700">Entrar</a>
                     {% endif %}
                 </div>
 
@@ -50,23 +50,26 @@
     <div id="mobile-menu"
         class="fixed top-0 right-0 h-full w-64 bg-gray-900 text-white transform translate-x-full transition-transform duration-300 z-50">
 
-        <div class="p-8 space-y-6 text-xl">
-            <button id="close-menu" class="text-2xl mb-6">✕</button>
-            <a href="/" class="block">Início</a>
-            <a href="{% url 'news_list' %}" class="block">Notícias</a>
-            <a href="{% url 'uniform_catalog' %}" class="block">Uniformes</a>
-            <a href="{% url 'document_list' %}" class="block">Documentos</a>
-            {% if user.is_authenticated %}
-            {% if user.is_staff %}
-            <a href="/admin" class="block w-full text-center bg-gray-800 hover:bg-gray-700 py-3 rounded-xl font-bold transition-colors">Área administrativa</a>
-            {% endif %}
-            <form method="post" action="/accounts/logout/" class="block">
-                {% csrf_token %}
-                <button type="submit" class="w-full text-left">Sair</button>
-            </form>
-            {% else %}
-            <a href="/accounts/login/" class="block">Entrar</a>
-            {% endif %}
+        <div class="p-8 space-y-2 text-xl font-medium">
+            <button id="close-menu" class="text-3xl mb-8 hover:text-yellow-300 active:scale-90 transition-all p-2 -ml-2 cursor-pointer">✕</button>
+            <a href="/" class="block px-4 py-3 rounded-xl transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95">Início</a>
+            <a href="{% url 'news_list' %}" class="block px-4 py-3 rounded-xl transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95">Notícias</a>
+            <a href="{% url 'uniform_catalog' %}" class="block px-4 py-3 rounded-xl transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95">Uniformes</a>
+            <a href="{% url 'document_list' %}" class="block px-4 py-3 rounded-xl transition-all duration-200 hover:bg-gray-800 hover:text-yellow-300 active:bg-gray-700 active:scale-95">Documentos</a>
+            
+            <div class="pt-6 mt-6 border-t border-gray-800 space-y-3">
+                {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                <a href="/admin" class="block w-full text-center bg-gray-800 hover:bg-gray-700 active:bg-gray-600 active:scale-95 py-3 rounded-xl font-bold transition-all duration-200">Área administrativa</a>
+                {% endif %}
+                <form method="post" action="/accounts/logout/" class="block">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full text-center bg-red-500 hover:bg-red-400 active:bg-red-600 active:scale-95 text-white py-3 rounded-xl font-bold transition-all duration-200 shadow-lg cursor-pointer">Sair</button>
+                </form>
+                {% else %}
+                <a href="/accounts/login/" class="block text-center bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 active:scale-95 text-black py-3 rounded-xl font-bold transition-all duration-200 shadow-lg">Entrar</a>
+                {% endif %}
+            </div>
         </div>
     </div>
     <main>
