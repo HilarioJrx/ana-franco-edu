@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ feed.title }} - Portal Ana Franco{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-12">
+    <div class="mb-8">
+        <a href="{% url 'news_list' %}" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center mb-6 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Voltar para Notícias
+        </a>
+
+        <div class="flex flex-wrap gap-2 mb-6">
+            {% for category in feed.categories.all %}
+            <span class="px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm" 
+                  style="background-color: {{ category.color|default:'#4B5563' }}">
+                {{ category.name }}
+            </span>
+            {% endfor %}
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight break-words">
+            {{ feed.title }}
+        </h1>
+
+        <div class="flex items-center text-sm text-gray-500 border-b border-gray-200 pb-6 mb-8">
+            <div class="flex items-center mr-6">
+                <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="font-medium text-gray-900">{{ feed.author.get_full_name|default:feed.author.username }}</span>
+            </div>
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <time datetime="{{ feed.created_at|date:'Y-m-d' }}">{{ feed.created_at|date:"d M, Y - H:i" }}</time>
+            </div>
+        </div>
+    </div>
+
+    {% if feed.image %}
+    <figure class="mb-10 rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+        <img src="{{ feed.image.url }}" 
+             alt="{{ feed.title }}" 
+             class="w-full h-auto max-h-[500px] object-cover">
+    </figure>
+    {% endif %}
+
+    <article class="prose prose-lg prose-blue max-w-none text-gray-800 break-words leading-relaxed whitespace-pre-wrap">{{ feed.content }}</article>
+    
+    <div class="mt-16 pt-8 border-t border-gray-200 text-center">
+        <a href="{% url 'news_list' %}" class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition-colors shadow-sm">
+            Ver Mais Notícias
+        </a>
+    </div>
+</div>
+{% endblock %}

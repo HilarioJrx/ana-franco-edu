@@ -14,11 +14,11 @@
         {% for feed in feeds %}
         <article class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
             {% if feed.image %}
-            <div class="aspect-video w-full bg-gray-200 relative">
+            <a href="{% url 'news_detail' feed.pk %}" class="aspect-video w-full bg-gray-200 relative block">
                 <img src="{{ feed.image.url }}" 
                      alt="{{ feed.title }}" 
-                     class="w-full h-full object-cover">
-            </div>
+                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+            </a>
             {% endif %}
             
             <div class="p-6 flex-1 flex flex-col">
@@ -31,13 +31,20 @@
                     {% endfor %}
                 </div>
 
-                <h2 class="text-2xl font-bold text-gray-900 mb-3 leading-tight hover:text-yellow-500 transition-colors cursor-pointer break-words">
-                    {{ feed.title }}
-                </h2>
+                <a href="{% url 'news_detail' feed.pk %}">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-3 leading-tight hover:text-yellow-500 transition-colors break-words">
+                        {{ feed.title }}
+                    </h2>
+                </a>
                 
-                <p class="text-gray-600 line-clamp-3 mb-6 flex-1 break-words">
+                <p class="text-gray-600 line-clamp-3 mb-4 flex-1 break-words">
                     {{ feed.content }}
                 </p>
+                
+                <a href="{% url 'news_detail' feed.pk %}" class="text-blue-600 hover:text-blue-800 font-semibold text-sm mb-6 inline-flex items-center">
+                    Leia mais
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
 
                 <div class="flex items-center justify-between pt-4 border-t border-gray-50 text-sm text-gray-500 mt-auto">
                     <div class="flex items-center space-x-2">

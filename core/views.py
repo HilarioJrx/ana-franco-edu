@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login as auth_login
@@ -18,6 +18,10 @@ def home(request):
 def news_list(request):
     feeds = Feed.objects.all().order_by('-created_at').prefetch_related('categories')
     return render(request, 'core/news_list.html', {'feeds': feeds})
+
+def news_detail(request, pk):
+    feed = get_object_or_404(Feed.objects.prefetch_related('categories'), pk=pk)
+    return render(request, 'core/news_detail.html', {'feed': feed})
 
 
 class CustomLoginView(LoginView):
