@@ -1,0 +1,49 @@
+    <!-- Checkout Section (Alunos only) -->
+    {% if is_aluno %}
+    <section id="checkout-section"
+        class="hidden bg-white rounded-3xl shadow-sm border border-gray-100 p-8 lg:p-10 mb-16 animate-fade-in">
+        <button onclick="backToCatalog()"
+            class="mb-8 flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Voltar para o catálogo
+        </button>
+
+        <div class="mb-10">
+            <h2 class="text-3xl font-black text-gray-900">Resumo do Pedido</h2>
+            <p class="text-gray-500 mt-1">Revise os itens antes de enviar.</p>
+        </div>
+
+        <div id="checkout-items" class="space-y-4 mb-10">
+            <!-- Items injected via JS -->
+        </div>
+
+        <form method="post" id="final-order-form">
+            {% csrf_token %}
+            <!-- Hidden Django Formset Management -->
+            {{ item_formset.management_form }}
+            <div id="hidden-formset-container" class="hidden">
+                <!-- Hidden inputs will be injected here -->
+            </div>
+
+            <div class="bg-gray-50 rounded-3xl p-6 sm:p-8">
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-3">Alguma observação?</label>
+                    {{ order_form.notes }}
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-gray-200">
+                    <div>
+                        <div class="text-sm text-gray-500">Total do Pedido</div>
+                        <div id="checkout-total" class="text-3xl font-black text-gray-900">R$ 0,00</div>
+                    </div>
+                    <button type="submit"
+                        class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-extrabold px-12 py-4 rounded-2xl shadow-xl transition-all hover:-translate-y-1">
+                        Finalizar Pedido
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+    {% endif %}

@@ -1,0 +1,76 @@
+<!-- Catalog Grid -->
+{% load static %}
+{% if items %}
+<section id="catalog-section" class="mb-16">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Itens Disponíveis</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in items %}
+        <div onclick="openItemModal({{ item.id }})"
+            class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer group hover:-translate-y-1">
+            <!-- Image -->
+            {% if item.image_key %}
+            <div class="w-full h-48 bg-gray-100 overflow-hidden">
+                <img src="/media/{{ item.image_key }}" alt="{{ item.name }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            </div>
+            {% elif item.item_type|lower == 'camiseta' %}
+            <div class="w-full h-48 bg-gray-50 flex items-center justify-center border-b border-gray-100">
+                <img src="{% static 't-shirt.png' %}" alt="{{ item.name }}"
+                    class="h-36 object-contain group-hover:scale-110 transition-transform duration-500">
+            </div>
+            {% elif item.item_type|lower == 'moletom' %}
+            <div class="w-full h-48 bg-gray-50 flex items-center justify-center border-b border-gray-100">
+                <img src="{% static 'hoodie.png' %}" alt="{{ item.name }}"
+                    class="h-36 object-contain group-hover:scale-110 transition-transform duration-500">
+            </div>
+            {% else %}
+            <div class="w-full h-48 bg-gray-50 flex items-center justify-center border-b border-gray-100">
+                <span class="text-7xl group-hover:scale-110 transition-transform duration-500">👕</span>
+            </div>
+            {% endif %}
+
+            <!-- Content -->
+            <div class="px-4 py-3">
+                <div class="flex justify-between items-start mb-1">
+                    <h3 class="text-lg font-bold text-gray-900">{{ item.name }}</h3>
+                </div>
+
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="inline-block px-2 py-0.5 rounded bg-gray-100 text-gray-600 text-xs font-medium">
+                        {{ item.color }}
+                    </span>
+                </div>
+
+                <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
+                    <span class="text-xl font-extrabold text-gray-900">R$ {{ item.price }}</span>
+                    <span class="text-yellow-500 font-bold text-sm bg-yellow-50 px-2 py-1 rounded-lg">+
+                        Escolher</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Script Data for JS -->
+<script id="items-data" type="application/json">
+        [
+            {% for item in items %}
+            {
+                "id": {{ item.id }},
+                "name": "{{ item.name }}",
+                "price": "{{ item.price }}",
+                "type": "{{ item.item_type }}",
+                "color": "{{ item.color }}",
+                "image": "{% if item.image_key %}/media/{{ item.image_key }}{% elif item.item_type|lower == 'camiseta' %}{% static 't-shirt.png' %}{% elif item.item_type|lower == 'moletom' %}{% static 'hoodie.png' %}{% else %}null{% endif %}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    </script>
+{% else %}
+<div class="bg-white rounded-2xl p-12 text-center border-2 border-dashed border-gray-200 mb-16">
+    <div class="text-6xl mb-4">👕</div>
+    <h3 class="text-xl font-bold text-gray-900">Nenhum item disponível no momento</h3>
+    <p class="text-gray-500 mt-2">Fique ligado! Em breve teremos uniformes disponíveis para pedido.</p>
+</div>
+{% endif %}

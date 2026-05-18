@@ -1,0 +1,257 @@
+<style>
+    @keyframes modalIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes bounceIn {
+        0% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        70% {
+            transform: scale(0.9);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .animate-modal-in {
+        animation: modalIn 0.3s ease-out forwards;
+    }
+
+    .animate-bounce-in {
+        animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .animate-fade-in {
+        animation: modalIn 0.4s ease-out forwards;
+    }
+
+    .size-btn-active {
+        background-color: #111827 !important;
+        color: white !important;
+        border-color: #111827 !important;
+    }
+</style>
+
+<script>
+    const isAluno = {% if is_aluno %}true{% else %} false{% endif %};
+    const itemsData = JSON.parse(document.getElementById('items-data').textContent);
+    const sizeChoices = ['PP', 'P', 'M', 'G', 'GG', 'XG'];
+
+    let cart = JSON.parse(localStorage.getItem('uniform_cart') || '[]');
+    let currentItem = null;
+    let currentQty = 1;
+    let currentSize = '';
+
+    function openItemModal(id) {
+        currentItem = itemsData.find(i => i.id === id);
+        currentQty = 1;
+        currentSize = '';
+
+        document.getElementById('modal-item-name').textContent = currentItem.name;
+        document.getElementById('modal-item-price').textContent = `R$ ${currentItem.price}`;
+        document.getElementById('modal-item-color').textContent = `Cor: ${currentItem.color}`;
+
+        const img = document.getElementById('modal-item-img');
+        if (currentItem.image && currentItem.image !== 'null') {
+            img.src = currentItem.image;
+            img.style.display = 'block';
+        } else {
+            img.src = '';
+            img.style.display = 'none';
+        }
+
+        renderSizeOptions();
+        updateQtyDisplay();
+
+        const modal = document.getElementById('item-modal');
+        modal.classList.remove('hidden');
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeItemModal() {
+        const modal = document.getElementById('item-modal');
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function renderSizeOptions() {
+        const container = document.getElementById('size-options');
+        container.innerHTML = sizeChoices.map(size => `
+            <button onclick="selectSize('${size}')" id="size-${size}" 
+                class="py-3 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-colors">
+                ${size}
+            </button>
+        `).join('');
+    }
+
+    function selectSize(size) {
+        currentSize = size;
+        sizeChoices.forEach(s => {
+            const btn = document.getElementById(`size-${s}`);
+            if (s === size) btn.classList.add('size-btn-active');
+            else btn.classList.remove('size-btn-active');
+        });
+    }
+
+    function updateQty(delta) {
+        currentQty = Math.max(1, Math.min(20, currentQty + delta));
+        updateQtyDisplay();
+    }
+
+    function updateQtyDisplay() {
+        document.getElementById('modal-qty').textContent = currentQty;
+    }
+
+    function addItemToCart() {
+        if (!currentSize) {
+            alert('Por favor, selecione um tamanho.');
+            return;
+        }
+
+        const cartItem = {
+            id: currentItem.id,
+            name: currentItem.name,
+            price: parseFloat(currentItem.price.replace(',', '.')),
+            size: currentSize,
+            qty: currentQty,
+            image: currentItem.image
+        };
+
+        cart.push(cartItem);
+        saveCart();
+        closeItemModal();
+        updateFloatingCart();
+
+        // Visual feedback
+        const btn = document.getElementById('floating-cart');
+        btn.classList.add('animate-bounce');
+        setTimeout(() => btn.classList.remove('animate-bounce'), 1000);
+    }
+
+    function saveCart() {
+        localStorage.setItem('uniform_cart', JSON.stringify(cart));
+    }
+
+    function updateFloatingCart() {
+        const floating = document.getElementById('floating-cart');
+        const count = document.getElementById('cart-count');
+
+        if (cart.length > 0) {
+            floating.classList.remove('hidden');
+            count.textContent = cart.length;
+        } else {
+            floating.classList.add('hidden');
+        }
+    }
+
+    function goToCheckout() {
+        document.getElementById('catalog-section').classList.add('hidden');
+        document.getElementById('floating-cart').classList.add('hidden');
+        document.getElementById('checkout-section').classList.remove('hidden');
+        renderCheckout();
+        window.scrollTo(0, 0);
+    }
+
+    function backToCatalog() {
+        document.getElementById('catalog-section').classList.remove('hidden');
+        document.getElementById('checkout-section').classList.add('hidden');
+        updateFloatingCart();
+    }
+
+    function renderCheckout() {
+        const container = document.getElementById('checkout-items');
+        let total = 0;
+
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-center py-10 text-gray-500">Seu carrinho está vazio.</p>';
+            document.getElementById('checkout-total').textContent = 'R$ 0,00';
+            return;
+        }
+
+        container.innerHTML = cart.map((item, index) => {
+            const subtotal = item.price * item.qty;
+            total += subtotal;
+            return `
+                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-white rounded-xl border border-gray-100 flex items-center justify-center shrink-0">
+                        ${item.image && item.image !== 'null' ? `<img src="${item.image}" class="w-full h-full object-contain p-1">` : '<span class="text-2xl">👕</span>'}
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-gray-900">${item.name}</h4>
+                        <div class="text-sm text-gray-500">Tamanho: ${item.size} | Qtd: ${item.qty}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-gray-900">R$ ${subtotal.toFixed(2).replace('.', ',')}</div>
+                        <button onclick="removeFromCart(${index})" class="text-xs text-red-500 font-semibold hover:underline">Remover</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('checkout-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        syncFormset();
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        saveCart();
+        renderCheckout();
+    }
+
+    function syncFormset() {
+        const container = document.getElementById('hidden-formset-container');
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+
+        container.innerHTML = '';
+        totalForms.value = cart.length;
+
+        cart.forEach((item, idx) => {
+            container.innerHTML += `
+                <input type="hidden" name="form-${idx}-uniform_item" value="${item.id}">
+                <input type="hidden" name="form-${idx}-size" value="${item.size}">
+                <input type="hidden" name="form-${idx}-quantity" value="${item.qty}">
+            `;
+        });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        // Clear cart if success message is present
+        const successMessage = document.querySelector('.bg-green-50');
+        if (successMessage) {
+            localStorage.removeItem('uniform_cart');
+            cart = [];
+        }
+
+        updateFloatingCart();
+
+        // Intercept form submission to clear cart
+        const form = document.getElementById('final-order-form');
+        if (form) {
+            form.addEventListener('submit', () => {
+                localStorage.removeItem('uniform_cart');
+                cart = [];
+            });
+        }
+    });
+</script>

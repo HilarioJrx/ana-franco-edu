@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import home, CustomLoginView, editor, gestor, news_list, uniform_catalog, document_list
+from .views import home, CustomLoginView, editor, gestor, news_list, uniform_catalog, document_list, my_orders
 
 urlpatterns = [
     path('', home, name='home'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('editor/', editor, name='editor'),
     path('gestor/', gestor, name='gestor'),
+    path('meus-pedidos/', my_orders, name='my_orders'),
 ]

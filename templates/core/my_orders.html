@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Pedidos - Portal Ana Franco{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-8">
+        <a href="{% url 'uniform_catalog' %}" class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors font-semibold">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Voltar para o catálogo
+        </a>
+    </div>
+
+    {% include 'core/components/uniforms/order_history.html' %}
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+    <!-- Order History Section -->
+    <section id="orders-history" class="mt-8 mb-16">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold text-gray-900">Meus Pedidos</h2>
+            <span class="text-sm text-gray-500">{{ user_orders|length }} pedido{{ user_orders|pluralize }} realizado{{ user_orders|pluralize }}</span>
+        </div>
+
+        {% if user_orders %}
+        <div class="grid grid-cols-1 gap-6">
+            {% for order in user_orders %}
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div class="p-6 sm:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl">
+                                📦
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900">Pedido #{{ order.id }}</h3>
+                                <p class="text-sm text-gray-500">{{ order.created_at|date:"d/m/Y \à\s H:i" }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Badge -->
+                        <div>
+                            {% if order.status == 'pendente' %}
+                                <span class="px-4 py-1.5 rounded-full bg-yellow-100 text-yellow-700 text-sm font-bold border border-yellow-200">Pendente</span>
+                            {% elif order.status == 'preparando' %}
+                                <span class="px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-sm font-bold border border-blue-200">Em Preparação</span>
+                            {% elif order.status == 'disponivel' %}
+                                <span class="px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-bold border border-green-200">Disponível para Retirada</span>
+                            {% elif order.status == 'entregue' %}
+                                <span class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-600 text-sm font-bold border border-gray-200">Entregue</span>
+                            {% elif order.status == 'cancelado' %}
+                                <span class="px-4 py-1.5 rounded-full bg-red-100 text-red-700 text-sm font-bold border border-red-200">Cancelado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Order Items Summary -->
+                    <div class="bg-gray-50 rounded-2xl p-4 sm:p-6 mb-4">
+                        <div class="space-y-3">
+                            {% for item in order.items.all %}
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-700">
+                                    <span class="font-bold">{{ item.quantity }}x</span> {{ item.uniform_item.name }} ({{ item.size }} - {{ item.uniform_item.color }})
+                                </span>
+                                <span class="text-gray-500">R$ {{ item.subtotal|floatformat:2 }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
+                            <span class="font-bold text-gray-900 text-lg">Total</span>
+                            <span class="font-black text-gray-900 text-xl">R$ {{ order.total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    {% if order.notes %}
+                    <div class="text-sm text-gray-600 italic">
+                        "{{ order.notes }}"
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm">
+            <div class="text-6xl mb-4">🛒</div>
+            <h3 class="text-xl font-bold text-gray-900">Você ainda não tem nenhum pedido</h3>
+            <p class="text-gray-500 mt-2 mb-8">Seus pedidos de uniformes aparecerão aqui.</p>
+            <a href="{% url 'uniform_catalog' %}" class="bg-yellow-400 hover:bg-yellow-500 text-black font-extrabold px-8 py-3 rounded-xl transition-colors inline-block">
+                Ir para a Loja
+            </a>
+        </div>
+        {% endif %}
+    </section>

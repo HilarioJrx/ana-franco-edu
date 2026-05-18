@@ -102,17 +102,19 @@ def uniform_catalog(request):
             order_form = UniformOrderForm()
             item_formset = UniformOrderItemFormSet()
 
-    user_orders = None
-    if request.user.is_authenticated:
-        user_orders = UniformOrder.objects.filter(user=request.user).order_by('-created_at')
-
     return render(request, 'core/uniform_catalog.html', {
         'items': items,
         'is_aluno': is_aluno,
         'order_form': order_form,
         'item_formset': item_formset,
-        'user_orders': user_orders,
     })
+
+@login_required
+def my_orders(request):
+    if not request.user.groups.filter(name='Alunos').exists() and not request.user.is_superuser:
+        return HttpResponseForbidden('Acesso restrito a Alunos')
+    user_orders = UniformOrder.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'core/my_orders.html', {'user_orders': user_orders})
 
 def document_list(request):
     doc_dir = os.path.join(settings.MEDIA_ROOT, 'documentos')

@@ -1,0 +1,69 @@
+<!-- Selection Modal -->
+<div id="item-modal" class="hidden overflow-y-auto" style="position: fixed; inset: 0; z-index: 9999; display: none;"
+    aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-2 pb-20 text-center sm:block sm:p-0">
+        <div onclick="closeItemModal()"
+            style="position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); transition: opacity 0.3s;"
+            aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full animate-modal-in"
+            style="position: relative; z-index: 10000; max-width: 450px; width: 90%;">
+            <div class="bg-white px-6 py-6 sm:p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <h3 class="text-2xl font-extrabold text-gray-900" id="modal-item-name">Nome do Item</h3>
+                    <button onclick="closeItemModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex gap-6 mb-8">
+                    <div id="modal-item-img-container"
+                        class="w-32 h-32 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden shrink-0 border border-gray-100">
+                        <img id="modal-item-img" src="" alt="" class="w-full h-full object-contain p-2">
+                    </div>
+                    <div>
+                        <div class="text-3xl font-black text-gray-900 mb-1" id="modal-item-price">R$ 0,00</div>
+                        <div class="text-sm text-gray-500" id="modal-item-color">Cor: ---</div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Escolha o Tamanho</label>
+                        <div class="grid grid-cols-4 gap-2" id="size-options">
+                            <!-- Sizes will be injected via JS -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Quantidade</label>
+                        <div class="flex items-center gap-4">
+                            <button onclick="updateQty(-1)"
+                                class="w-16 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">-</button>
+                            <span id="modal-qty" class="text-xl font-bold w-8 text-center">1</span>
+                            <button onclick="updateQty(1)"
+                                class="w-16 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 sm:px-8 flex flex-col gap-3">
+                {% if is_aluno %}
+                <button onclick="addItemToCart()"
+                    class="w-full bg-gray-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-black transition-all">
+                    Adicionar ao Pedido
+                </button>
+                {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}"
+                    class="w-full bg-yellow-400 text-black text-center font-bold py-4 rounded-2xl shadow-lg hover:bg-yellow-500 transition-all">
+                    Faça login para pedir
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
