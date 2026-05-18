@@ -12,7 +12,8 @@
     {% if feeds %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for feed in feeds %}
-        <article class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
+        <article onclick="window.location='{% url 'news_detail' feed.pk %}'"
+                 class="bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 active:scale-[0.985] active:bg-gray-50/80 transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col cursor-pointer">
             {% if feed.image %}
             <a href="{% url 'news_detail' feed.pk %}" class="aspect-video w-full bg-gray-200 relative block">
                 <img src="{{ feed.image.url }}" 
