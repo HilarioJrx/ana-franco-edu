@@ -94,6 +94,38 @@
         document.body.style.overflow = 'auto';
     }
 
+    function openImageZoom() {
+        const modalImg = document.getElementById('modal-item-img');
+        if (modalImg && modalImg.src) {
+            const zoomOverlay = document.getElementById('image-zoom-overlay');
+            const zoomedImg = document.getElementById('zoomed-image');
+            zoomedImg.src = modalImg.src;
+            zoomOverlay.classList.remove('hidden');
+            // Force browser reflow to trigger opacity transition
+            zoomOverlay.offsetHeight; 
+            zoomOverlay.classList.remove('opacity-0');
+            zoomOverlay.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden'; // Keep body scrolled lock
+        }
+    }
+
+    function closeImageZoom(event) {
+        if (event) event.stopPropagation();
+        const zoomOverlay = document.getElementById('image-zoom-overlay');
+        if (!zoomOverlay.classList.contains('hidden')) {
+            zoomOverlay.classList.remove('opacity-100');
+            zoomOverlay.classList.add('opacity-0');
+            setTimeout(() => {
+                zoomOverlay.classList.add('hidden');
+                // Keep body overflow hidden if item-modal is still open
+                const modal = document.getElementById('item-modal');
+                if (modal.classList.contains('hidden')) {
+                    document.body.style.overflow = 'auto';
+                }
+            }, 300);
+        }
+    }
+
     function renderSizeOptions() {
         const container = document.getElementById('size-options');
         container.innerHTML = sizeChoices.map(size => `
