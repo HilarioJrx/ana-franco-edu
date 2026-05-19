@@ -1,0 +1,34 @@
+<script>
+    (function() {
+        const forgotBtn = document.getElementById('forgot-password-btn');
+        const modal = document.getElementById('password-modal');
+        const modalContent = document.getElementById('password-modal-content');
+        const closeBtn = document.getElementById('close-password-modal');
+
+        if (forgotBtn && modal && modalContent && closeBtn) {
+            const openModal = () => {
+                modal.classList.remove('hidden');
+                // Force reflow
+                modal.offsetHeight;
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            };
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+
+            forgotBtn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+    })();
+</script>

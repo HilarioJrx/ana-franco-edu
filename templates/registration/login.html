@@ -1,23 +1,46 @@
 {% extends 'base.html' %}
 
+{% block title %}Entrar - Portal Ana Franco{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto mt-12 p-6 bg-white rounded shadow">
-    <h2 class="text-2xl mb-4">Entrar</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="mb-4">
-            <label for="id_username" class="block">Usuário</label>
-            {{ form.username }}
+<div class="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-50 to-gray-100">
+    <div
+        class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-10 transform hover:shadow-2xl transition-shadow duration-300">
+
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Bem-vindo de volta!</h2>
+            <p class="text-gray-500 mt-2 text-sm">Entre com suas credenciais do Portal Escolar</p>
         </div>
-        <div class="mb-4">
-            <label for="id_password" class="block">Senha</label>
-            {{ form.password }}
-        </div>
-        <div class="flex items-center justify-between">
-            <button type="submit" class="bg-yellow-400 text-black hover:bg-yellow-500 px-4 py-2 rounded">Entrar</button>
-            <a href="/">Voltar</a>
-        </div>
-    </form>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors or form.errors %}
+            <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2.5">
+                <span class="text-lg leading-none">⚠️</span>
+                <span>Usuário ou senha incorretos. Por favor, verifique seus dados.</span>
+            </div>
+            {% endif %}
+
+            {% include 'components/login/username_input.html' %}
+            {% include 'components/login/password_input.html' with show_forgot_password=True %}
+
+            <div class="flex items-center gap-3 pt-2">
+                <button type="submit"
+                    class="flex-1 bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 active:scale-[0.98] text-black font-bold py-3.5 px-4 rounded-xl transition-all duration-200 shadow hover:shadow-md cursor-pointer text-center">
+                    Entrar
+                </button>
+                <a href="/"
+                    class="px-5 py-3.5 rounded-xl font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-[0.98] transition-all duration-200 text-center">
+                    Voltar
+                </a>
+            </div>
+        </form>
+
+    </div>
 </div>
+
+{% include 'components/login/modal.html' %}
+
+{% include 'components/login/scripts.html' %}
 {% endblock %}
