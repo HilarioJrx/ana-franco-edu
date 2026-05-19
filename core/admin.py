@@ -13,6 +13,17 @@ class FeedAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content')
     filter_horizontal = ('categories',)
 
+    class Media:
+        css = {
+            'all': (
+                'https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css',
+            )
+        }
+        js = (
+            'https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js',
+            'js/admin_quill.js',
+        )
+
 
 @admin.register(UniformItem)
 class UniformItemAdmin(admin.ModelAdmin):

@@ -43,7 +43,7 @@
     </figure>
     {% endif %}
 
-    <article class="prose prose-lg prose-blue max-w-none text-gray-800 break-words leading-relaxed whitespace-pre-wrap">{{ feed.content }}</article>
+    <article class="prose prose-lg prose-blue max-w-none text-gray-800 break-words leading-relaxed whitespace-pre-wrap">{{ feed.content|safe }}</article>
     
     <div class="mt-16 pt-8 border-t border-gray-200 text-center">
         <a href="{% url 'news_list' %}" class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-full transition-colors shadow-sm">

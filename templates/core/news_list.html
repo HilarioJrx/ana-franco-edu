@@ -39,7 +39,7 @@
                 </a>
                 
                 <p class="text-gray-600 line-clamp-3 mb-4 flex-1 break-words">
-                    {{ feed.content }}
+                    {{ feed.content|striptags|truncatechars:160 }}
                 </p>
                 
                 <a href="{% url 'news_detail' feed.pk %}" class="text-blue-600 hover:text-blue-800 font-semibold text-sm mb-6 inline-flex items-center">

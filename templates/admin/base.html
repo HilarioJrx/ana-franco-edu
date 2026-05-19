@@ -1,0 +1,96 @@
+{% extends 'admin/base.html' %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Force browser and document color schemes to always be light */
+    :root,
+    html,
+    body {
+        color-scheme: light !important;
+    }
+
+    /* Override dark theme variables with standard Django Admin light theme values */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --primary: #79aec8 !important;
+            --secondary: #417690 !important;
+            --accent: #f5dd5d !important;
+            --primary-fg: #fff !important;
+            --body-fg: #333 !important;
+            --body-bg: #fff !important;
+            --body-quiet-color: #666 !important;
+            --body-loud-color: #000 !important;
+            --header-bg: #417690 !important;
+            --header-fg: #ffc !important;
+            --header-link-color: #fff !important;
+            --breadcrumbs-bg: #79aec8 !important;
+            --breadcrumbs-fg: #c9e0ed !important;
+            --breadcrumbs-link-color: #fff !important;
+            --link-color: #447e9b !important;
+            --link-hover-color: #036 !important;
+            --link-selected-color: #5b80b2 !important;
+            --hairline-color: #e8e8e8 !important;
+            --border-color: #ccc !important;
+            --close-button-bg: #888 !important;
+            --close-button-hover-bg: #666 !important;
+            --message-success-bg: #dfd !important;
+            --message-warning-bg: #ffe !important;
+            --message-error-bg: #ffefef !important;
+            --darkened-bg: #f8f8f8 !important;
+            --selected-bg: #e4e4e4 !important;
+            --selected-row: #ffc !important;
+            --button-bg: #79aec8 !important;
+            --button-hover-bg: #609ab6 !important;
+            --button-fg: #fff !important;
+            --default-button-bg: #417690 !important;
+            --default-button-hover-bg: #205067 !important;
+            --default-button-fg: #fff !important;
+        }
+    }
+
+    /* Override explicitly set dark mode data-theme attributes */
+    [data-theme="dark"] {
+        --primary: #79aec8 !important;
+        --secondary: #417690 !important;
+        --accent: #f5dd5d !important;
+        --primary-fg: #fff !important;
+        --body-fg: #333 !important;
+        --body-bg: #fff !important;
+        --body-quiet-color: #666 !important;
+        --body-loud-color: #000 !important;
+        --header-bg: #417690 !important;
+        --header-fg: #ffc !important;
+        --header-link-color: #fff !important;
+        --breadcrumbs-bg: #79aec8 !important;
+        --breadcrumbs-fg: #c9e0ed !important;
+        --breadcrumbs-link-color: #fff !important;
+        --link-color: #447e9b !important;
+        --link-hover-color: #036 !important;
+        --link-selected-color: #5b80b2 !important;
+        --hairline-color: #e8e8e8 !important;
+        --border-color: #ccc !important;
+        --close-button-bg: #888 !important;
+        --close-button-hover-bg: #666 !important;
+        --message-success-bg: #dfd !important;
+        --message-warning-bg: #ffe !important;
+        --message-error-bg: #ffefef !important;
+        --darkened-bg: #f8f8f8 !important;
+        --selected-bg: #e4e4e4 !important;
+        --selected-row: #ffc !important;
+        --button-bg: #79aec8 !important;
+        --button-hover-bg: #609ab6 !important;
+        --button-fg: #fff !important;
+        --default-button-bg: #417690 !important;
+        --default-button-hover-bg: #205067 !important;
+        --default-button-fg: #fff !important;
+    }
+
+    /* Hide the theme toggle selector button in Django 4.2+ */
+    .theme-toggle,
+    #theme-toggle,
+    button.theme-toggle {
+        display: none !important;
+    }
+</style>
+{% endblock %}
